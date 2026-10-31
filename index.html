@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A private, local essay planner for university applications."
+    />
+    <title>Essay Desk</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>Essay Desk</h1>
+          <p class="subtitle">Write your essays dumbass</p>
+        </div>
+        <div class="header-actions">
+          <button class="button button-quiet" id="theme-toggle" type="button" aria-label="Switch to dark mode">Dark mode</button>
+          <button class="button button-quiet" id="export-pdf" type="button">Export PDF</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="section-heading">
+            <h2>Universities</h2>
+            <button class="icon-button" id="add-university" type="button" aria-label="Add university">+</button>
+          </div>
+          <div id="university-list" class="university-list"></div>
+          <p id="empty-universities" class="empty-state">Add a university to get started.</p>
+        </aside>
+
+        <section class="content" aria-live="polite">
+          <div id="empty-selection" class="empty-selection">
+            <span class="empty-mark">✦</span>
+            <h2>Your essays, in one quiet place.</h2>
+            <p>Select a university or add your first one to begin.</p>
+            <button class="button button-primary" id="empty-add-university" type="button">Add university</button>
+          </div>
+
+          <div id="university-view" hidden>
+            <div class="content-heading">
+              <div>
+                <p class="eyebrow" id="selected-university-label">University</p>
+                <h2 id="selected-university-name"></h2>
+              </div>
+              <div class="content-actions">
+                <button class="button button-quiet" id="toggle-complete" type="button">Mark complete</button>
+                <button class="button button-quiet danger-text" id="delete-university" type="button">Delete</button>
+              </div>
+            </div>
+
+            <section class="deadline-card" aria-labelledby="deadline-heading">
+              <div>
+                <p class="eyebrow">Application deadline</p>
+                <h3 id="deadline-heading">Stay ahead of the date</h3>
+                <p id="deadline-summary" class="deadline-summary">No deadline set</p>
+              </div>
+              <div class="deadline-actions">
+                <div id="countdown" class="countdown" hidden>
+                  <strong id="countdown-value">—</strong>
+                  <span>remaining</span>
+                </div>
+                <button class="button button-quiet" id="toggle-timer" type="button">Run timer</button>
+                <button class="button button-quiet" id="edit-deadline" type="button">Set deadline</button>
+              </div>
+            </section>
+
+            <div class="topic-toolbar">
+              <h3>Essay topics</h3>
+              <button class="button button-primary" id="add-topic" type="button">Add topic</button>
+            </div>
+            <div id="topic-list" class="topic-list"></div>
+            <p id="empty-topics" class="empty-state" hidden>No topics yet. Add a prompt to start writing.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog id="university-dialog">
+      <form method="dialog" id="university-form">
+        <h2>Add university</h2>
+        <label for="university-name">Name</label>
+        <input id="university-name" name="name" type="text" placeholder="e.g. University of Edinburgh" required maxlength="120" />
+        <div class="deadline-fields">
+          <div>
+            <label for="deadline-date">Application date and time <span>(optional)</span></label>
+            <input id="deadline-date" name="deadline" type="datetime-local" />
+          </div>
+          <div>
+            <label for="deadline-timezone">Timezone</label>
+            <select id="deadline-timezone" name="timezone">
+              <option value="UTC">UTC</option>
+              <option value="America/New_York">Eastern Time (US)</option>
+              <option value="America/Chicago">Central Time (US)</option>
+              <option value="America/Denver">Mountain Time (US)</option>
+              <option value="America/Los_Angeles">Pacific Time (US)</option>
+              <option value="Europe/London">London</option>
+              <option value="Europe/Paris">Central European Time</option>
+              <option value="Asia/Kolkata">India Standard Time</option>
+              <option value="Asia/Singapore">Singapore</option>
+              <option value="Asia/Tokyo">Japan</option>
+              <option value="Australia/Sydney">Sydney</option>
+            </select>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="button button-quiet" value="cancel" type="submit">Cancel</button>
+          <button class="button button-primary" value="save" type="submit">Add university</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="deadline-dialog">
+      <form method="dialog" id="deadline-form">
+        <h2>Application deadline</h2>
+        <label for="edit-deadline-date">Date and time</label>
+        <input id="edit-deadline-date" name="deadline" type="datetime-local" required />
+        <label for="edit-deadline-timezone">Timezone</label>
+        <select id="edit-deadline-timezone" name="timezone">
+          <option value="UTC">UTC</option>
+          <option value="America/New_York">Eastern Time (US)</option>
+          <option value="America/Chicago">Central Time (US)</option>
+          <option value="America/Denver">Mountain Time (US)</option>
+          <option value="America/Los_Angeles">Pacific Time (US)</option>
+          <option value="Europe/London">London</option>
+          <option value="Europe/Paris">Central European Time</option>
+          <option value="Asia/Kolkata">India Standard Time</option>
+          <option value="Asia/Singapore">Singapore</option>
+          <option value="Asia/Tokyo">Japan</option>
+          <option value="Australia/Sydney">Sydney</option>
+        </select>
+        <div class="dialog-actions">
+          <button class="button button-quiet" value="cancel" type="submit">Cancel</button>
+          <button class="button button-primary" value="save" type="submit">Save deadline</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="topic-dialog">
+      <form method="dialog" id="topic-form">
+        <h2>Add essay topic</h2>
+        <label for="topic-title">Prompt</label>
+        <textarea id="topic-title" name="title" rows="3" placeholder="Paste the essay prompt here…" required maxlength="1000"></textarea>
+        <div class="limit-fields">
+          <div>
+            <label for="limit-type">Limit type</label>
+            <select id="limit-type" name="limitType">
+              <option value="words">Words</option>
+              <option value="characters">Characters</option>
+            </select>
+          </div>
+          <div>
+            <label for="limit">Limit</label>
+            <input id="limit" name="limit" type="number" min="1" max="1000000" placeholder="650" required />
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="button button-quiet" value="cancel" type="submit">Cancel</button>
+          <button class="button button-primary" value="save" type="submit">Add topic</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="fullscreen-dialog" class="fullscreen-dialog">
+      <form method="dialog" id="fullscreen-form">
+        <div class="fullscreen-heading">
+          <div>
+            <p class="eyebrow">Essay</p>
+            <h2 id="fullscreen-topic"></h2>
+          </div>
+          <button class="button button-quiet" value="close" type="submit">Close</button>
+        </div>
+        <textarea id="fullscreen-text" placeholder="Start writing here…" spellcheck="true"></textarea>
+        <div class="editor-footer">
+          <span id="fullscreen-count">0 words · 0 characters</span>
+          <span id="fullscreen-limit"></span>
+        </div>
+      </form>
+    </dialog>
+
+    <input id="download-name" type="hidden" />
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
