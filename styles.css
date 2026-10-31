@@ -114,6 +114,7 @@ dialog input, dialog select { margin-bottom: 13px; }
 .fullscreen-dialog form { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .fullscreen-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
 .fullscreen-heading h2 { max-width: 760px; line-height: 1.35; }
+.print-export { display: none; }
 [data-theme="dark"] .privacy-note { border-color: #3b6652; color: #b7ddc6; }
 [data-theme="dark"] .topic-card:hover, [data-theme="dark"] .topic-card.active { background: #21362c; }
 @media (max-width: 720px) {
@@ -132,8 +133,17 @@ dialog input, dialog select { margin-bottom: 13px; }
 }
 
 @media print {
+  @page { margin: 20mm; }
+  html, body { height: auto; overflow: visible; }
   body { color: #000; background: #fff; }
-  .app-shell { max-width: none; padding: 0; }
+  .app-shell { display: none; }
+  .print-export { display: block; color: #000; background: #fff; }
+  .print-export h1 { margin: 0 0 32px; font-family: Georgia, serif; font-size: 28pt; }
+  .print-essay { margin: 0 0 36px; break-inside: avoid; }
+  .print-essay h2 { margin: 0 0 8px; font-family: Georgia, serif; font-size: 16pt; line-height: 1.35; }
+  .print-limit { margin: 0 0 18px; color: #555; font-size: 10pt; }
+  .print-essay-text { margin: 0; white-space: pre-wrap; font-size: 11pt; line-height: 1.65; }
+  .print-essay-text::first-line { white-space: pre-wrap; }
   .app-header, .privacy-note, .sidebar, .content-actions,
   .deadline-actions, .topic-toolbar .button, .save-status { display: none !important; }
   .workspace { display: block; min-height: 0; border: 0; box-shadow: none; }

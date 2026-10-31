@@ -38,6 +38,7 @@ const elements = {
   topicTitle: $("topic-title"),
   limitType: $("limit-type"),
   limit: $("limit"),
+  printExport: $("print-export"),
 };
 let countdownInterval;
 
@@ -382,10 +383,29 @@ $("export-pdf").addEventListener("click", () => {
     alert("Select a university before exporting.");
     return;
   }
+  elements.printExport.replaceChildren();
+  const heading = document.createElement("h1");
+  heading.textContent = university.name;
+  elements.printExport.append(heading);
+  university.topics.forEach((topic) => {
+    const essaySection = document.createElement("section");
+    essaySection.className = "print-essay";
+    const topicHeading = document.createElement("h2");
+    topicHeading.textContent = topic.title;
+    const limit = document.createElement("p");
+    limit.className = "print-limit";
+    limit.textContent = `Limit: ${topic.limit.toLocaleString()} ${topic.limitType}`;
+    const essay = document.createElement("p");
+    essay.className = "print-essay-text";
+    essay.textContent = topic.essay || "No essay written yet.";
+    essaySection.append(topicHeading, limit, essay);
+    elements.printExport.append(essaySection);
+  });
   const originalTitle = document.title;
   document.title = `${university.name} - Essay Desk`;
   window.addEventListener("afterprint", () => {
     document.title = originalTitle;
+    elements.printExport.replaceChildren();
   }, { once: true });
   window.print();
 });
